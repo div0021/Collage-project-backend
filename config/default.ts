@@ -8,5 +8,6 @@ export default {
     publicKey:"",
     privateKey:"",
     origin:'http://localhost:5173',
-    googleOAuthRedirectURL:'http://localhost:1337/api/sessions/oauth/google'
+    googleOAuthRedirectURL:'http://localhost:1337/api/sessions/oauth/google',
+    domain:'localhost'
 }

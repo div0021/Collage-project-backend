@@ -13,14 +13,15 @@ import { get, omit } from "lodash";
 
 const accessTokenTtl = config.get<string>("accessTokenTtl");
 const refreshTokenTtl = config.get<string>("refreshTokenTtl");
+const domain = config.get<string>('domain')
 
 const accessTokenCookieOptions:CookieOptions= {
   maxAge: 86400000, // 1 days
   httpOnly: true,
-  domain: "localhost", // change in production
+  domain: domain || "localhost", // change in production
   path: "/",
-  sameSite: "strict",
-  secure: false,
+  sameSite: "lax",
+  secure: true,
 }
 
 const refreshTokenCookieOptions:CookieOptions = {
@@ -108,8 +109,8 @@ export async function deleteSessionHandler(req: Request, res: Response) {
     ) {
       res.clearCookie("accessToken", {
         httpOnly: true,
-        sameSite: "strict",
-        secure: false,
+        sameSite: "lax",
+        secure: true,
       });
     }
     if (
@@ -118,8 +119,8 @@ export async function deleteSessionHandler(req: Request, res: Response) {
     ) {
       res.clearCookie("refreshToken", {
         httpOnly: true,
-        sameSite: "strict",
-        secure: false,
+        sameSite: "lax",
+        secure: true,
       });
     }
 

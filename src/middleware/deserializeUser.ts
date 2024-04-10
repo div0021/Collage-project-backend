@@ -3,6 +3,7 @@ import { get } from "lodash";
 import { verfiyJwt } from "../utils/jwt.utils";
 import { reIssueAccessToken } from "../service/session.service";
 import log from "../utils/logger";
+import config from "config";
 
 const deserializeUser = async (
   req: Request,
@@ -10,17 +11,19 @@ const deserializeUser = async (
   next: NextFunction
 ) => {
 
+  const domain = config.get<string>('domain')
+
   
   if(req.url==='/api/sessions'){
     res.clearCookie("accessToken", {
       httpOnly: true,
-      sameSite: "strict",
-      secure: false,
+      sameSite: "lax",
+      secure: true,
     });    
     res.clearCookie("refreshToken", {
       httpOnly: true,
-      sameSite: "strict",
-      secure: false,
+      sameSite: "lax",
+      secure: true,
     });    
   }
 
@@ -59,10 +62,10 @@ const deserializeUser = async (
       res.cookie("accessToken",newAccessToken,{
         maxAge:86400000,
         httpOnly:true,
-        domain:'localhost',
+        domain:domain || 'localhost',
         path:"/",
-        sameSite:"strict",
-        secure:false,
+        sameSite:"lax",
+        secure:true,
       })
     }
 
