@@ -9,5 +9,5 @@ export default {
     privateKey:"",
     origin:'https://collage-project-pi.vercel.app',
     googleOAuthRedirectURL:'https://collage-project-backend.onrender.com/api/sessions/oauth/google',
-    domain:"collage-project-pi.vercel.app"
+    domain:"collage-project-backend.onrender.com"
 }
