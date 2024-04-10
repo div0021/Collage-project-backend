@@ -5,7 +5,9 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "nodemon src/server.ts | pino-pretty",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint . --ext .ts",
+    "build":"tsc",
+    "start": "node dist/src/server.js | pino-pretty"
   },
   "keywords": [],
   "author": "",
