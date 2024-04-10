@@ -69,6 +69,9 @@ export async function createUserSessionHandler(req: Request, res: Response) {
       { expiresIn: refreshTokenTtl }
     );
 
+    console.log("refesh token is",refreshToken)
+    console.log("access token is",accessToken)
+
     // storing access token and refresh in cookies
 
     res.cookie("accessToken", accessToken, accessTokenCookieOptions);
