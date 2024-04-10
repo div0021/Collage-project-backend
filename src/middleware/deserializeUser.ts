@@ -17,12 +17,12 @@ const deserializeUser = async (
   if(req.url==='/api/sessions'){
     res.clearCookie("accessToken", {
       httpOnly: true,
-      sameSite: "none",
+      sameSite: "lax",
       secure: true,
     });    
     res.clearCookie("refreshToken", {
       httpOnly: true,
-      sameSite: "none",
+      sameSite: "lax",
       secure: true,
     });    
   }
@@ -64,7 +64,7 @@ const deserializeUser = async (
         httpOnly:true,
         domain:domain || 'localhost',
         path:"/",
-        sameSite:"none",
+        sameSite:"lax",
         secure:true,
       })
     }
