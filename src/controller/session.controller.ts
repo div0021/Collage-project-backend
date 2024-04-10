@@ -20,7 +20,7 @@ const accessTokenCookieOptions:CookieOptions= {
   httpOnly: true,
   domain: domain || "localhost", // change in production
   path: "/",
-  sameSite: "lax",
+  sameSite: "none",
   secure: true,
 }
 
@@ -109,7 +109,7 @@ export async function deleteSessionHandler(req: Request, res: Response) {
     ) {
       res.clearCookie("accessToken", {
         httpOnly: true,
-        sameSite: "lax",
+        sameSite: "none",
         secure: true,
       });
     }
@@ -119,7 +119,7 @@ export async function deleteSessionHandler(req: Request, res: Response) {
     ) {
       res.clearCookie("refreshToken", {
         httpOnly: true,
-        sameSite: "lax",
+        sameSite: "none",
         secure: true,
       });
     }
