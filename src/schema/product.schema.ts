@@ -1,11 +1,18 @@
-import { TypeOf, number, object, string } from "zod";
+import { TypeOf, array, boolean, number, object, string } from "zod";
 
 const payload = {
     body:object({
-        title:string().min(3,"Title is too short"),
+        name:string().min(3,"Title is too short"),
         description:string().min(30,"description is too short"),
-        price:number({required_error:"Price is required!"}),
-        image:string({required_error:"Image is required!"}),    
+        brand:string().min(3,"brand name is too short"),
+        price:number({required_error:"Price is required!"}).nonnegative("Number should be greater than zero"),
+        images:array(string()).length(4,"Four images required for the product."),    
+        category:string({required_error:"Category is required!"}),    
+        discount:number().min(1,"This is too low!"),
+        subCategories:array(string()).min(1,"provide subcategories."),
+        quantity:number().nonnegative("Stock should be positive"),
+        isFeatured:boolean().default(false),
+        isArchived:boolean().default(false),
     })
 }
 const params = {

@@ -6,7 +6,16 @@ export async function createProduct(input:ProductInput){
 }
 
 export async function findProduct(query:FilterQuery<ProductDocument>,options:QueryOptions = {lean:true}) {
-    return await ProductModel.findOne(query,{},options);
+    return await ProductModel.findOne({...query,isArchived:false},{},options);
+}
+
+export async function getAllProducts(options:QueryOptions = {lean:true}) {
+    return await ProductModel.find({isArchived:false},{},options).populate('category');
+}
+
+
+export async function getAllAdminProducts(options:QueryOptions = {lean:true}) {
+    return await ProductModel.find({},{},options).populate('category');
 }
 
 export async function findAndUpdateProduct(query:FilterQuery<ProductDocument>,update:UpdateQuery<ProductDocument>,options:QueryOptions) {

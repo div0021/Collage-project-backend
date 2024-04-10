@@ -6,10 +6,13 @@ import { createUserSessionHandler, deleteSessionHandler, getUserSessionsHandler,
 import { createSessionSchema } from "./schema/session.schema";
 import requireUser from "./middleware/requireUser";
 import { createProductSchema, deleteProductSchema, getProductSchema, updateProductSchema } from "./schema/product.schema";
-import { createProductHandler, deleteProductHandler, getProductHandler, updateProductHandler } from "./controller/product.controller";
+import { createProductHandler, deleteProductHandler, getAllAdminProductHandler, getAllProductHandler, getProductHandler, updateProductHandler } from "./controller/product.controller";
 import { resetPasswordEmailSchema, resetPasswordOTPSchema, resetPasswordSchema } from "./schema/resetpassword.schema";
 import { resetPassword, resetPasswordEmail, resetPasswordMailVerification } from "./controller/forgetPassword.controller";
 import requireEmail from "./middleware/requireEmail";
+import requireAdminUser from "./middleware/requireAdminUser";
+import { createCategorySchema, deleteCategorySchema, getCategorySchema, updateCategorySchema } from "./schema/category.schema";
+import { createCategoryHandler, deleteCategoryHandler, getAllCategoryHandler, getCategoryHandler, updateCategoryHandler } from "./controller/category.controller";
 export default function routes(app:Express){
 
     app.get("/healthcheck",(req:Request,res:Response)=>{
@@ -41,15 +44,47 @@ export default function routes(app:Express){
     app.get("/api/sessions/oauth/google",googleOauthHandler)
 
 
-    // product 
+    // Category
+
+    // admin routes
+    // Create
+    app.post("/api/admin/category/create",[requireAdminUser,validate(createCategorySchema)],createCategoryHandler);
+
+    // update 
+    app.put("/api/admin/category/:categoryId",[requireAdminUser,validate(updateCategorySchema)],updateCategoryHandler);
+
+    // delete
+    app.delete("/api/admin/category/:categoryId",[requireAdminUser,validate(deleteCategorySchema)],deleteCategoryHandler);
+
     
-    app.post("/api/products",[requireUser,validate(createProductSchema)],createProductHandler);
+    // Normal routes
+    // get by id
+    app.get("/api/category/:categoryId",validate(getCategorySchema),getCategoryHandler);
 
-    app.put("/api/products/:productId",[requireUser,validate(updateProductSchema)],updateProductHandler);
+    // get All
+    app.get("/api/allCategories",getAllCategoryHandler);
 
 
-    app.get("/api/products/:productId",validate(getProductSchema),getProductHandler);
+    // product 
+    // admin routes
+    //create
+    app.post("/api/admin/product",[requireAdminUser,validate(createProductSchema)],createProductHandler);
 
-    app.delete("/api/products/:productId",[requireUser,validate(deleteProductSchema)],deleteProductHandler);
+    // update
+    app.put("/api/admin/product/:productId",[requireAdminUser,validate(updateProductSchema)],updateProductHandler);
+
+    // delete
+    app.delete("/api/admin/product/:productId",[requireAdminUser,validate(deleteProductSchema)],deleteProductHandler);
+
+    // all product for admin
+    app.get("/api/admin/products",requireAdminUser,getAllAdminProductHandler);
+
+
+    // Normal access
+    app.get("/api/product/:productId",validate(getProductSchema),getProductHandler);
+
+    app.get("/api/products",getAllProductHandler);
+
+
 
 }

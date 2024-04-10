@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { AnyZodObject } from "zod";
+import { AnyZodObject, ZodError } from "zod";
 import logger from "../utils/logger";
 const validate = (schema:AnyZodObject) => (req:Request,res:Response,next:NextFunction) => {
 
@@ -14,6 +14,9 @@ const validate = (schema:AnyZodObject) => (req:Request,res:Response,next:NextFun
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }catch(e:any){
         logger.error(`Validation error: ${e.errors}}`);
+        if(e instanceof ZodError){
+            console.log("errors",e.message)
+        }
         return res.status(400).send(e.errors);
 
     }

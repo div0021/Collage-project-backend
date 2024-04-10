@@ -22,5 +22,6 @@ export async function createUserHandler(req:Request<object,object,CreateUserInpu
 }
 
 export async function getCurrentUser(req:Request,res:Response){
+    console.log('request', res.locals.user);
     return res.send(omit(res.locals.user,"session"))
 }

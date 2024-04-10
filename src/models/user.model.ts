@@ -3,6 +3,11 @@ import bcrypt from "bcrypt"
 import config from "config"
 import log from "../utils/logger";
 
+export enum  UserRoles {
+    ADMIN = 'admin',
+    USER = 'user'
+}
+
 const userSchema = new mongoose.Schema({
     email:{
         type:String,
@@ -21,6 +26,11 @@ const userSchema = new mongoose.Schema({
     image:{
       type:String,
     },
+    role:{
+      type: String,
+      enum:['user','admin'],
+      default:'user',
+    },
     userSurvey:{
       type:Boolean,
       default:false,
@@ -38,6 +48,7 @@ export interface UserInput {
   }
   
   export interface UserDocument extends UserInput, mongoose.Document {
+    role: UserRoles;
     isEmailVerified:boolean,
     userSurvey:boolean,
     image:string,

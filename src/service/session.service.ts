@@ -22,7 +22,9 @@ export async function updateSession(query:FilterQuery<SessionDocument>,update:Up
 export async function reIssueAccessToken({refreshToken}:{refreshToken:string}){
     const {decoded} = verfiyJwt(refreshToken);
 
+
     if(!decoded || !get(decoded,"session")) return false;
+
 
     const session = await SessionModel.findById(get(decoded,"session"))
 
