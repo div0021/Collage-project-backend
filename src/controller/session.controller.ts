@@ -22,6 +22,7 @@ const accessTokenCookieOptions:CookieOptions= {
   path: "/",
   sameSite: "lax",
   secure: true,
+  priority:'high',
 }
 
 const refreshTokenCookieOptions:CookieOptions = {
