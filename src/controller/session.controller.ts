@@ -78,11 +78,6 @@ export async function createUserSessionHandler(req: Request, res: Response) {
 
     res.cookie("refreshToken", refreshToken, refreshTokenCookieOptions);
 
-    console.log("after access set",
-    get(req, "cookies.accessToken") )
-    console.log("after refresh set",
-    get(req, "cookies.refreshToken") )
-
     return res.status(200).json({ message: "Login successful" });
   } catch (error) {
     log.error("[CREATESESSION]:: " + error);
