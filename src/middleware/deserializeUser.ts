@@ -35,6 +35,9 @@ const deserializeUser = async (
 
     log.info({url:req.url,method:req.method})
 
+    console.log("refresh",refreshToken)
+    console.log("accessToken",accessToken);
+
   if(!refreshToken){
     return next();
   }
