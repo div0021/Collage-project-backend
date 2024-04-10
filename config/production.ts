@@ -7,6 +7,6 @@ export default {
     refreshTokenTtl:"23h",
     publicKey:"",
     privateKey:"",
-    origin:'https://collage-project-pi.vercel.app/',
+    origin:'https://collage-project-pi.vercel.app',
     googleOAuthRedirectURL:'https://collage-project-backend.onrender.com/api/sessions/oauth/google'
 }
