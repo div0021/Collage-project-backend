@@ -40,13 +40,14 @@ const productSchema = new Schema(
     price:{type:Number,required:true},
     images:[{type:String,required:true}],
     subCategories:[{type:String}],
-    quantity: { type : Number , required: true , default : 0 },
-    discount: { type : Number , required: false ,default : 0 },
+    quantity: { type : Number , required: true , default : 1,min:0 },
+    discount: { type : Number , required: true ,default : 0 },
     isFeatured:{type:Boolean, required:true, default:false},
     isArchived:{type:Boolean, required:true, default:false},
   },
   { timestamps: true }
 );
+
 const ProductModel = model<ProductDocument>("Product", productSchema);
 
 export default ProductModel;

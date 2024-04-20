@@ -6,7 +6,7 @@ const payload = {
         description:string().min(30,"description is too short"),
         brand:string().min(3,"brand name is too short"),
         price:number({required_error:"Price is required!"}).nonnegative("Number should be greater than zero"),
-        images:array(string()).length(4,"Four images required for the product."),    
+        images:array(string()),    
         category:string({required_error:"Category is required!"}),    
         discount:number().min(1,"This is too low!"),
         subCategories:array(string()).min(1,"provide subcategories."),

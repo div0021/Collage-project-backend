@@ -26,16 +26,14 @@ const handlebarOptions:NodemailerExpressHandlebarsOptions = {
 
 transporter.use('compile', hbs(handlebarOptions));
 
-export const  sendEmail = async (receiverMailId: string , otp : string) =>{
+export const  sendEmail = async (receiverMailId: string ,template:string,subject:string,context:object) =>{
 
     const mailOptions = {
         from:"thakurdivyanshusingh600@gmail.com",
         to:receiverMailId,
-        subject:'Recover password otp',
-        template:'otp',
-        context:{
-            otpnumber:otp,
-        }
+        subject:subject,
+        template:template,
+        context:context
     }
         const mailInfo = await transporter.sendMail(mailOptions)
 

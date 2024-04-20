@@ -40,6 +40,9 @@ export const deleteCategorySchema =  object({
 export const getCategorySchema =  object({
     ...params
 })
+export const getProductByCategorySchema =  object({
+    ...params
+})
 
 export type CreateCategoryInput = TypeOf<typeof createCategorySchema>
 
@@ -48,3 +51,4 @@ export type UpdateCategoryInput = TypeOf<typeof updateCategorySchema>
 export type DeleteCategoryInput = TypeOf<typeof deleteCategorySchema>
 
 export type GetCategoryInput = TypeOf<typeof getCategorySchema>
+export type GetProductByCategoryInput = TypeOf<typeof getProductByCategorySchema>

@@ -1,27 +1,92 @@
 import { Request, Response } from "express";
 import logger from "../utils/logger"
-import { createUser } from "../service/user.service";
-import { CreateUserInput } from "../schema/user.schema";
-import { omit } from "lodash";
+import { createUser, findUser, getProfile, updateProfile } from "../service/user.service";
+import { CreateUserInput, UpdateProfileInput } from "../schema/user.schema";
+import log from "../utils/logger";
 
 export async function createUserHandler(req:Request<object,object,CreateUserInput['body']>,res:Response){
 
     try{
-        const user = await createUser(req.body);
-        console.log("in controller")
-        return res.status(200).json(user);
+         await createUser(req.body);
+        return res.status(200).json({message:"user created success fully"});
     }catch(e){
         logger.error("[CREATEUSER]:: " + e);
         if(e instanceof Error){
-        return res.status(409).json(e.message)
+        return res.status(500).json(e.message)
     }else{
-        return res.sendStatus(409);
+        return res.sendStatus(500);
     }
     }
 
 }
 
 export async function getCurrentUser(req:Request,res:Response){
-    console.log('request', res.locals.user);
-    return res.send(omit(res.locals.user,"session"))
+    const userId = res.locals.user._id;
+
+    try{
+
+    const user = await findUser({_id:userId});
+
+    if(!user) return res.status(404).json({message:"user not found!"})
+    return res.send(user);
+
+}catch(e){
+    log.error("Get User Error",e);
+    return res.status(500).json({message:"Internal Error"});
+}
+}
+
+
+export async function getProfileHandler(req:Request,res:Response){
+
+    const userId = res.locals.user._id;
+
+    try{
+
+    const profile = await getProfile({user:userId});
+
+    if(!profile){
+        return res.sendStatus(404);
+    }
+
+
+    return res.status(200).json({profile});
+
+}catch(e){
+    logger.error("[GETPROFILEERROR]:: " + e);
+        if(e instanceof Error){
+        return res.status(500).json(e.message)
+    }else{
+        return res.sendStatus(500);
+    }
+
+}
+}
+
+export async function updateProfileHandler(req:Request<object,UpdateProfileInput["body"]>,res:Response) {
+
+    const userId = res.locals.user._id;
+
+    const {address,pincode,state,city} = req.body
+
+    try{
+
+        const profile = await getProfile({user:userId});
+
+        if(!profile){
+            return res.sendStatus(404);
+        }
+
+        await updateProfile({user:userId},{pincode,address,state,city},{new:true});
+
+        return res.sendStatus(204);
+    }catch(e){
+        logger.error("[UpdatePROFILEERROR]:: " + e);
+        if(e instanceof Error){
+        return res.status(500).json(e.message)
+    }else{
+        return res.sendStatus(500);
+    }
+    }
+    
 }

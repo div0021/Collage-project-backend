@@ -14,7 +14,7 @@ const deserializeUser = async (
   const domain = config.get<string>('domain')
 
   
-  if(req.url==='/api/sessions'){
+  if(req.url==='/api/sessions' || req.url==='/api/users'){
     res.clearCookie("accessToken", {
       httpOnly: true,
       sameSite: "lax",
@@ -35,8 +35,8 @@ const deserializeUser = async (
 
     log.info({url:req.url,method:req.method})
 
-    console.log("refresh",refreshToken)
-    console.log("accessToken",accessToken);
+    // console.log("refresh",refreshToken)
+    // console.log("accessToken",accessToken);
 
   if(!refreshToken){
     return next();
@@ -68,7 +68,9 @@ const deserializeUser = async (
         domain:domain || 'localhost',
         path:"/",
         sameSite:"lax",
-        secure:true,
+        secure:false,
+        // secure:true,
+        
       })
     }
 

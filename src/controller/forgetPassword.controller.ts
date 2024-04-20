@@ -51,7 +51,7 @@ export async function resetPasswordEmail(req: Request, res: Response) {
     //   console.log("previous token is deleted successfully.", response);
     }
 
-    const mailresponse = await sendEmail(email, otp);
+    const mailresponse = await sendEmail(email,'otp',"Recover password otp",{otpnumber:otp});
 
     if (mailresponse.rejected.length > 0) {
       throw new Error("Message is rejected");
@@ -115,7 +115,6 @@ export async function resetPasswordMailVerification(
       return res.status(403).json({ message: "Not valid otp." });
     }
 
-    // console.log("forgetPasswordUser is ",forgetPasswordUser);
     res.cookie("usermail", forgetPasswordUser[0].email, {
       sameSite: "strict",
       maxAge: 86400000, // 1 day
@@ -141,7 +140,6 @@ export async function resetPassword(req: Request, res: Response) {
   const email = res.locals.email;
 
   try {
-    // console.log("email is,", email);
 
     const validUser = await findUser({ email });
 
@@ -156,9 +154,6 @@ export async function resetPassword(req: Request, res: Response) {
       { password: hashPassword },
       { new: true }
     );
-
-    // console.log("password is ",password);
-    // console.log("updated user is ", updatedUser);
 
     res.clearCookie("usermail", {
       httpOnly: false,

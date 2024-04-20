@@ -6,14 +6,13 @@ import axios from "axios";
 import qs from "qs"
 import log from "../utils/logger";
 import { AxiosError } from "axios";
+import ProfileModel, { ProfileDocument, ProfileInput } from "../models/profile.model";
 
 export async function createUser(input:UserInput){
     try{
-        console.log("In services")
         const user = await UserModal.create(input)
 
         const result = omit(user.toJSON(),"password")
-        console.log(result)
 
         return result;
 
@@ -43,7 +42,7 @@ export async function validatePassword({email,password}:{email:string,password:s
 
 export async function findUser(query:FilterQuery<UserDocument>) {
 
-    return await UserModal.findOne(query).lean();
+    return await UserModal.findOne(query).select('-password').lean();
     
 }
 
@@ -134,4 +133,31 @@ export async function getGoogleUser({id_token,access_token}:{id_token:string;acc
         
 
     }
+}
+
+export async function updateUser(query:FilterQuery<UserDocument>,update:UpdateQuery<UserDocument>,options:QueryOptions){
+
+    await UserModal.findOneAndUpdate(query,update,options)
+
+}
+
+// Profile
+
+export async function createProfile(input:ProfileInput){
+
+    await ProfileModel.create(input)
+
+}
+
+export async function updateProfile(query:FilterQuery<ProfileDocument>,update:UpdateQuery<ProfileDocument>,options:QueryOptions){
+
+    await ProfileModel.findOneAndUpdate(query,update,options)
+
+}
+
+// get Profile
+export async function getProfile(query:FilterQuery<ProfileDocument>,options:QueryOptions = {lean:true}){
+
+    return await ProfileModel.findOne(query,{},options).populate("user","-password");
+    
 }

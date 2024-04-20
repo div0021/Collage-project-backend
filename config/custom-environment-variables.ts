@@ -7,5 +7,7 @@ export default {
     publicKey: "PUBLIC_KEY",
     dbUrl:"MONGODB_URL",
     googleClientId:'GOOGLE_CLIENT_ID',
-    googleClientSecret:'GOOGLE_CLIENT_SECRET'
+    googleClientSecret:'GOOGLE_CLIENT_SECRET',
+    razorpayKeyId:'RAZORPAY_ID',
+    razorpayKeySecret:'RAZORPAY_SECRET',
   };

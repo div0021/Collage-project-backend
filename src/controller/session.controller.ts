@@ -9,6 +9,7 @@ import log from "../utils/logger";
 import { signJwt } from "../utils/jwt.utils";
 import config from "config";
 import { get, omit } from "lodash";
+// import { sendEmail } from "../utils/sendmail";
 
 
 const accessTokenTtl = config.get<string>("accessTokenTtl");
@@ -21,8 +22,8 @@ const accessTokenCookieOptions:CookieOptions= {
   domain: domain || "localhost", // change in production
   path: "/",
   sameSite: "lax",
-  secure: true,
-  priority:'high',
+  secure: false,
+  // secure: true,
 }
 
 const refreshTokenCookieOptions:CookieOptions = {
@@ -31,6 +32,8 @@ const refreshTokenCookieOptions:CookieOptions = {
 
 export async function createUserSessionHandler(req: Request, res: Response) {
   const { email, password } = req.body;
+
+  console.log("email",email,"password",password)
 
 
   if (!email || !password) {
@@ -44,6 +47,20 @@ export async function createUserSessionHandler(req: Request, res: Response) {
     const user = await validatePassword({ email, password });
 
     if (!user) return res.status(401).send("Invalid email or password.");
+
+    // if user not verfied its email then send mail
+
+    // if(!user.isEmailVerified){
+
+      
+    // const mailresponse = await sendEmail(user.email,'email',"Email verfication",{link:user});
+
+    // if (mailresponse.rejected.length > 0) {
+    //   throw new Error("Message is rejected");
+    // }
+
+
+    // }
 
     // create session
 
@@ -78,6 +95,7 @@ export async function createUserSessionHandler(req: Request, res: Response) {
     res.cookie("accessToken", accessToken, accessTokenCookieOptions);
 
     res.cookie("refreshToken", refreshToken, refreshTokenCookieOptions);
+
 
     return res.status(200).json({ message: "Login successful" });
   } catch (error) {
@@ -114,7 +132,7 @@ export async function deleteSessionHandler(req: Request, res: Response) {
       res.clearCookie("accessToken", {
         httpOnly: true,
         sameSite: "lax",
-        secure: true,
+        secure: false,
       });
     }
     if (
@@ -124,7 +142,8 @@ export async function deleteSessionHandler(req: Request, res: Response) {
       res.clearCookie("refreshToken", {
         httpOnly: true,
         sameSite: "lax",
-        secure: true,
+        secure: false,
+        // secure: true,
       });
     }
 

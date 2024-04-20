@@ -1,18 +1,26 @@
 import { Express, Request, Response } from "express";
-import { createUserHandler, getCurrentUser } from "./controller/user.controller";
+import { createUserHandler, getCurrentUser, getProfileHandler, updateProfileHandler } from "./controller/user.controller";
 import validate from "./middleware/validateResource";
-import { createUserSchema } from "./schema/user.schema";
+import { createUserSchema, updateProfileSchema } from "./schema/user.schema";
 import { createUserSessionHandler, deleteSessionHandler, getUserSessionsHandler, googleOauthHandler } from "./controller/session.controller";
 import { createSessionSchema } from "./schema/session.schema";
 import requireUser from "./middleware/requireUser";
 import { createProductSchema, deleteProductSchema, getProductSchema, updateProductSchema } from "./schema/product.schema";
-import { createProductHandler, deleteProductHandler, getAllAdminProductHandler, getAllProductHandler, getProductHandler, updateProductHandler } from "./controller/product.controller";
+import { createProductHandler, deleteProductHandler, getAllAdminProductHandler, getAllProductHandler, getProductByCategoryHandler, getProductHandler, getRecommandedProductHandler, updateProductHandler } from "./controller/product.controller";
 import { resetPasswordEmailSchema, resetPasswordOTPSchema, resetPasswordSchema } from "./schema/resetpassword.schema";
 import { resetPassword, resetPasswordEmail, resetPasswordMailVerification } from "./controller/forgetPassword.controller";
 import requireEmail from "./middleware/requireEmail";
 import requireAdminUser from "./middleware/requireAdminUser";
-import { createCategorySchema, deleteCategorySchema, getCategorySchema, updateCategorySchema } from "./schema/category.schema";
+import { createCategorySchema, deleteCategorySchema, getCategorySchema, getProductByCategorySchema, updateCategorySchema } from "./schema/category.schema";
 import { createCategoryHandler, deleteCategoryHandler, getAllCategoryHandler, getCategoryHandler, updateCategoryHandler } from "./controller/category.controller";
+import { getCartHandler, updateCartHandler } from "./controller/cart.controller";
+import { updateCartSchema } from "./schema/cart.schema";
+import { updateFavouriteSchema } from "./schema/favourite.schema";
+import { getFavouriteHandler, updateFavouriteHandler } from "./controller/favourite.controller";
+import { createSurveySchema } from "./schema/survey.schema";
+import { createSurveyHandler } from "./controller/survey.controller";
+import { createOrderSchema } from "./schema/order.schema";
+import { createOrderHandler, getOrdersHandler, razepayGetKeyHandler, verifyPaymentHandler } from "./controller/order.controller";
 export default function routes(app:Express){
 
     app.get("/healthcheck",(req:Request,res:Response)=>{
@@ -86,5 +94,48 @@ export default function routes(app:Express){
     app.get("/api/products",getAllProductHandler);
 
 
+    app.get("/api/products/category/:categoryId",validate(getProductByCategorySchema),getProductByCategoryHandler);
+
+
+    // cart
+
+    // normal user
+
+    app.put("/api/cart",[requireUser,validate(updateCartSchema)],updateCartHandler)
+    app.get("/api/cart",requireUser,getCartHandler)
+
+    // favourite
+
+    app.put("/api/favourite",[requireUser,validate(updateFavouriteSchema)],updateFavouriteHandler);
+
+    app.get("/api/favourite",requireUser,getFavouriteHandler)
+
+    // survey
+
+    //create
+
+    app.post("/api/survey",[requireUser,validate(createSurveySchema)],createSurveyHandler);
+
+    // get
+
+    app.get("/api/survey",requireUser,getRecommandedProductHandler)
+
+    // get User Profile
+
+    app.get("/api/profile",requireUser,getProfileHandler)
+
+    app.put("/api/profile", [requireUser,validate(updateProfileSchema)] , updateProfileHandler);
+
+    // order 
+    app.post("/api/order",[requireUser,validate(createOrderSchema)],createOrderHandler);
+    app.get("/api/order",requireUser,getOrdersHandler);
+
+    // get razer pay key id
+
+    app.get("/api/getKey",requireUser,razepayGetKeyHandler);
+
+    // open url
+
+    app.post("/api/paymentVerification",verifyPaymentHandler);
 
 }
