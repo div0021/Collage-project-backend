@@ -7,6 +7,7 @@ import config from 'config'
 import crypto from "crypto"
 import { findAndUpdateProduct } from "../service/product.service";
 import { findAndUpdateCart } from "../service/cart.service";
+import { sendOrderSuccessEmail } from "../utils/sendmail";
 
 export async function createOrderHandler(req:Request<object,CreateOrderInput["body"]>,res:Response) {
 
@@ -54,7 +55,7 @@ export async function createOrderHandler(req:Request<object,CreateOrderInput["bo
 
 export  async function verifyPaymentHandler(req:Request,res:Response){
 
-    const userId = res.locals.user._id;
+    const user = res.locals.user;
 
     const key_secret = config.get<string>('razorpayKeySecret')
     const origin = config.get<string>('origin');
@@ -79,6 +80,10 @@ export  async function verifyPaymentHandler(req:Request,res:Response){
 
     const order = await updateOrder({razorpay_order_id},{isPaymentLegit:true,razorpay_payment_id,razorpay_signature},{new:true});
 
+    if(!order) return  res.sendStatus(404);
+
+    // updating product and add to cart
+
     const products = order?.products;
 
 
@@ -100,13 +105,20 @@ export  async function verifyPaymentHandler(req:Request,res:Response){
         }
 
 
-         await findAndUpdateCart({user:userId},{
+         await findAndUpdateCart({user:user._id},{
             $pull:{products:{data:productId}}
           },{})
 
 
 
     })
+
+    // send mail to the user
+    const mailresponse = await sendOrderSuccessEmail(user.email,order?.razorpay_order_id);
+
+    if (mailresponse.rejected.length > 0) {
+      throw new Error("Message is rejected");
+    }
 
     return res.redirect(`${origin}/paymentsuccess?reference=${razorpay_payment_id}`);
 

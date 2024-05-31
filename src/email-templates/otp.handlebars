@@ -1,16 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
+      <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OTP verifcation</title>
-
+    <title>OTP Verification</title>
     <style>
-       
-       
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #007bff;
+        }
+        p {
+            line-height: 1.6;
+        }
+        img {
+            max-width: 100px;
+            height: auto;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
-    <h4>Your otp is <spn style="font-weight: 700; text-decoration: underline;">{{otpnumber}}</spn></h4>
+    <div class="container">
+        <img src="https://res.cloudinary.com/dqx4z7wss/image/upload/v1713608936/cehcnszb9aavzrlgaozk.png" alt="Brand Logo">
+        <h1>OTP Verification</h1>
+        <p>Your OTP code is: <strong>{{otp}}</strong></p>
+    </div>
 </body>
 </html>

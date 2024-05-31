@@ -1,5 +1,5 @@
-import { Express, Request, Response } from "express";
-import { createUserHandler, getCurrentUser, getProfileHandler, updateProfileHandler } from "./controller/user.controller";
+import { Express } from "express";
+import { createUserHandler, getCurrentUser, getProfileHandler, updateProfileHandler, verifyMailHandler } from "./controller/user.controller";
 import validate from "./middleware/validateResource";
 import { createUserSchema, updateProfileSchema } from "./schema/user.schema";
 import { createUserSessionHandler, deleteSessionHandler, getUserSessionsHandler, googleOauthHandler } from "./controller/session.controller";
@@ -23,10 +23,6 @@ import { createOrderSchema } from "./schema/order.schema";
 import { createOrderHandler, getOrdersHandler, razepayGetKeyHandler, verifyPaymentHandler } from "./controller/order.controller";
 export default function routes(app:Express){
 
-    app.get("/healthcheck",(req:Request,res:Response)=>{
-        res.sendStatus(200)
-
-    });
     // create a new user
     app.post("/api/users",validate(createUserSchema),createUserHandler);
 
@@ -137,5 +133,9 @@ export default function routes(app:Express){
     // open url
 
     app.post("/api/paymentVerification",verifyPaymentHandler);
+
+    // verify mail
+
+    app.get("/api/verifymail",verifyMailHandler);
 
 }

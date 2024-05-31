@@ -1,4 +1,3 @@
-import { sendEmail } from "../utils/sendmail";
 import { randomstring } from "../utils/randomstring";
 import {
   createForgetSession,
@@ -13,6 +12,7 @@ import log from "../utils/logger";
 import bcrypt from "bcrypt";
 import { findAndUpdateUser, findUser } from "../service/user.service";
 import { textToHash } from "../utils/textToHash";
+import { sendOTPVerificationEmail } from "../utils/sendmail";
 
 // resetPassword
 // 1. send otp
@@ -48,10 +48,9 @@ export async function resetPasswordEmail(req: Request, res: Response) {
       }
 
       await deleteForgetSession({ email });
-    //   console.log("previous token is deleted successfully.", response);
     }
 
-    const mailresponse = await sendEmail(email,'otp',"Recover password otp",{otpnumber:otp});
+    const mailresponse = await sendOTPVerificationEmail(email,otp);
 
     if (mailresponse.rejected.length > 0) {
       throw new Error("Message is rejected");

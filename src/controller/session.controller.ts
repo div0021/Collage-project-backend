@@ -9,7 +9,7 @@ import log from "../utils/logger";
 import { signJwt } from "../utils/jwt.utils";
 import config from "config";
 import { get, omit } from "lodash";
-// import { sendEmail } from "../utils/sendmail";
+import { sendEmailVerificationEmail } from "../utils/sendmail";
 
 
 const accessTokenTtl = config.get<string>("accessTokenTtl");
@@ -21,9 +21,9 @@ const accessTokenCookieOptions:CookieOptions= {
   httpOnly: true,
   domain: domain || "localhost", // change in production
   path: "/",
-  sameSite: "lax",
-  secure: false,
-  // secure: true,
+  sameSite: "none",
+  // secure: false,
+  secure: true,
 }
 
 const refreshTokenCookieOptions:CookieOptions = {
@@ -48,25 +48,39 @@ export async function createUserSessionHandler(req: Request, res: Response) {
 
     if (!user) return res.status(401).send("Invalid email or password.");
 
-    // if user not verfied its email then send mail
-
-    // if(!user.isEmailVerified){
-
-      
-    // const mailresponse = await sendEmail(user.email,'email',"Email verfication",{link:user});
-
-    // if (mailresponse.rejected.length > 0) {
-    //   throw new Error("Message is rejected");
-    // }
-
-
-    // }
-
+    
     // create session
 
     const session = await createSession(user._id, req.get("user-agent") || "");
 
     const validUser = omit(user.toJSON(), ["password"]);
+
+    // if user not verfied its email then send mail
+
+    if(!user.isEmailVerified){
+
+      const emailToken = signJwt(
+        {
+          ...validUser,
+          session: session._id,
+        },
+        { expiresIn: accessTokenTtl }
+      ); // valid for 15 min
+
+      const PORT = config.get<number>('port')
+
+      const link = `${req.protocol}://${req.hostname}:${PORT}/api/verifymail/?token=${emailToken}`;
+
+      
+    const mailresponse = await sendEmailVerificationEmail(user.email,link);
+
+    if (mailresponse.rejected.length > 0) {
+      throw new Error("Message is rejected");
+    }
+
+
+    }
+
 
     // create access token
 
@@ -86,9 +100,6 @@ export async function createUserSessionHandler(req: Request, res: Response) {
       },
       { expiresIn: refreshTokenTtl }
     );
-
-    console.log("refesh token is",refreshToken)
-    console.log("access token is",accessToken)
 
     // storing access token and refresh in cookies
 
@@ -187,6 +198,7 @@ export async function googleOauthHandler(req:Request, res:Response) {
       email:googleUser.email,
       name:googleUser.name,
       image:googleUser.picture,
+      isEmailVerified:googleUser.verified_email
      },{upsert:true,new:true})
 
      // create session

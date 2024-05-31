@@ -67,9 +67,9 @@ const deserializeUser = async (
         httpOnly:true,
         domain:domain || 'localhost',
         path:"/",
-        sameSite:"lax",
-        secure:false,
-        // secure:true,
+        sameSite:"none",
+        // secure:false,
+        secure:true,
         
       })
     }

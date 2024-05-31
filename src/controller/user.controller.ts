@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import logger from "../utils/logger"
-import { createUser, findUser, getProfile, updateProfile } from "../service/user.service";
+import { createUser, findAndUpdateUser, findUser, getProfile, updateProfile } from "../service/user.service";
 import { CreateUserInput, UpdateProfileInput } from "../schema/user.schema";
 import log from "../utils/logger";
+import { verfiyJwt } from "../utils/jwt.utils";
+import config from "config"
 
 export async function createUserHandler(req:Request<object,object,CreateUserInput['body']>,res:Response){
 
@@ -89,4 +91,54 @@ export async function updateProfileHandler(req:Request<object,UpdateProfileInput
     }
     }
     
+}
+
+// verify email
+
+export async function verifyMailHandler(req:Request,res:Response){
+
+    const {token} = req.query;
+
+    const origin = config.get<string>('origin');
+    
+    if(!token){
+        return res.sendStatus(404);
+    }
+
+    try{
+
+    // decode token
+    const { decoded, expired } = verfiyJwt(token as string);
+
+    if(expired){
+       return res.sendStatus(403);
+    }
+
+
+    if (decoded) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const user:any = decoded;
+
+      const validUser =await findUser({_id:user._id})
+
+      if(!validUser) return res.sendStatus(404);
+
+      await findAndUpdateUser({_id:validUser._id},{isEmailVerified:true});
+
+      return res.redirect(`${origin}`);
+
+      
+    }
+  
+
+    return res.sendStatus(404);
+
+}catch(e){
+        logger.error("[UpdatePROFILEERROR]:: " + e);
+        if(e instanceof Error){
+        return res.status(500).json(e.message)
+    }else{
+        return res.sendStatus(500);
+    }
+    }
 }
